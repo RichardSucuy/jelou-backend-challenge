@@ -2,6 +2,7 @@
 
 Sistema B2B de pedidos compuesto por dos APIs REST y un Lambda orquestador.
 
+
 ## Arquitectura
 
 ```
@@ -15,6 +16,20 @@ Customers API (3001) ←→ Orders API (3002) ←→ Lambda Orquestador (3003)
 - Docker Desktop
 - Node.js 22+
 - npm
+
+## Nota de arquitectura
+
+Siguiendo las indicaciones de la prueba, se implementaron dos APIs principales: **Customers API** y **Orders API**, donde la gestión de productos forma parte de Orders.
+
+Sin embargo, en un entorno de producción y a mayor escala, lo más adecuado sería desacoplar la gestión de productos en un servicio independiente (Products API). Esto permitiría:
+
+- Escalabilidad independiente del catálogo de productos
+- Mejor separación de responsabilidades (SRP)
+- Mayor flexibilidad para integraciones externas (inventarios, pricing, etc.)
+
+En este caso, se mantuvo la estructura solicitada para cumplir con los requisitos de la prueba técnica.
+
+
 
 ## Levantamiento local
 
