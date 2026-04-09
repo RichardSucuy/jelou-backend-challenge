@@ -32,6 +32,16 @@ Además, este enfoque facilitaría la evolución hacia una arquitectura basada e
 En este caso, se mantuvo la estructura solicitada para cumplir con los requisitos de la prueba técnica.
 
 
+## 🖥️ Entorno de Ejecución y Desarrollo
+
+Para garantizar que el sistema sea **totalmente reproducible**, auditable y fácil de probar sin dependencias de infraestructura externa, se ha optado por un entorno de desarrollo **100% local**:
+
+*   **Docker Compose**: Orquesta las APIs y la base de datos MySQL, asegurando que los servicios corran en contenedores aislados con configuraciones idénticas.
+*   **Serverless Offline**: Se utiliza para emular el comportamiento del **Lambda Orquestador** en local. Esto permite validar la lógica de orquestación, el manejo de eventos y la comunicación entre servicios de manera fiel a como operaría en un entorno real de AWS.
+*   **Portabilidad**: El diseño de los servicios es *Cloud-Ready*. El código del Lambda y las APIs es compatible para ser desplegado en **AWS Lambda** y **Amazon RDS** simplemente ajustando las variables de entorno.
+
+Este enfoque asegura que cualquier evaluador pueda levantar el flujo completo del sistema en pocos minutos sin necesidad de configurar credenciales o recursos en la nube.
+
 
 ## Levantamiento local
 
@@ -144,7 +154,7 @@ curl -X POST http://localhost:3002/orders/1/cancel \
 ```bash
 cd lambda-orchestrator
 npm install
-npm run dev
+npm run dev  # Inicia serverless-offline para emular AWS Lambda
 ```
 
 ### Invocar desde Insomnia/Postman
