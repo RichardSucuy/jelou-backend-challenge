@@ -27,6 +27,8 @@ Sin embargo, en un entorno de producción y a mayor escala, lo más adecuado ser
 - Mejor separación de responsabilidades (SRP)
 - Mayor flexibilidad para integraciones externas (inventarios, pricing, etc.)
 
+Además, este enfoque facilitaría la evolución hacia una arquitectura basada en microservicios.
+
 En este caso, se mantuvo la estructura solicitada para cumplir con los requisitos de la prueba técnica.
 
 
