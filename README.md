@@ -32,6 +32,18 @@ Además, este enfoque facilitaría la evolución hacia una arquitectura basada e
 En este caso, se mantuvo la estructura solicitada para cumplir con los requisitos de la prueba técnica.
 
 
+## 🛠️ Stack Tecnológico y Decisiones Técnicas
+
+El sistema ha sido construido utilizando herramientas modernas para garantizar robustez y escalabilidad:
+
+- **Runtime**: Node.js 22+
+- **Frameworks**: Express.js para las APIs y Serverless Framework para el Lambda.
+- **Validación (Zod)**: Se implementó **Zod** en ambas APIs y en el Lambda Orquestador para garantizar que todas las peticiones (Payloads y Query Params) cumplan con el esquema requerido antes de procesar cualquier lógica de negocio.
+- **Seguridad**: Autenticación mediante **JWT (JSON Web Tokens)** para proteger los endpoints sensibles.
+- **Persistencia**: MySQL 8.0 con relaciones definidas y soporte para transacciones.
+- **Idempotencia**: Implementada en el flujo de creación de órdenes para evitar duplicados en reintentos de red.
+
+
 ## 🖥️ Entorno de Ejecución y Desarrollo
 
 Para garantizar que el sistema sea **totalmente reproducible**, auditable y fácil de probar sin dependencias de infraestructura externa, se ha optado por un entorno de desarrollo **100% local**:
