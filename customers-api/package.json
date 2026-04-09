@@ -5,8 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js",    
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/server.js",
+    "build": "echo 'No build step required'",
+    "migrate": "node -e \"require('dotenv').config(); const pool = require('./src/db/connection'); pool.query('SELECT 1').then(() => { console.log('DB connected'); process.exit(0); })\"",
+    "seed": "echo 'Seed ejecutado via docker-entrypoint db/seed.sql'",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +24,8 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "jest": "^30.3.0",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
   }
 }

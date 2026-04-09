@@ -27,14 +27,14 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - PORT=3001
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_NAME=${MYSQL_DATABASE}
-      - DB_USER=${MYSQL_USER}
-      - DB_PASSWORD=${MYSQL_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
-      - SERVICE_TOKEN=${SERVICE_TOKEN}
+      PORT: 3001
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      SERVICE_TOKEN: ${SERVICE_TOKEN}
     depends_on:
       mysql:
         condition: service_healthy
@@ -46,15 +46,15 @@ services:
     ports:
       - "3002:3002"
     environment:
-      - PORT=3002
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_NAME=${MYSQL_DATABASE}
-      - DB_USER=${MYSQL_USER}
-      - DB_PASSWORD=${MYSQL_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
-      - SERVICE_TOKEN=${SERVICE_TOKEN}
-      - CUSTOMERS_API_BASE=http://customers-api:3001
+      PORT: 3002
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      SERVICE_TOKEN: ${SERVICE_TOKEN}
+      CUSTOMERS_API_BASE: http://customers-api:3001
     depends_on:
       mysql:
         condition: service_healthy

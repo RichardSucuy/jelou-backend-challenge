@@ -1,0 +1,537 @@
+// 'use strict';
+
+// /**
+//  * Integration tests – customers-api
+//  * Corren contra la BD real en Docker (localhost:3307).
+//  * Asegurate de que docker-compose esté levantado antes de ejecutar.
+//  *
+//  * Variables de entorno necesarias (se leen del .env):
+//  *   DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+//  *   JWT_SECRET, SERVICE_TOKEN
+//  */
+
+// require('dotenv').config(); // carga .env desde la raiz del servicio
+
+// const request = require('supertest');
+// const jwt     = require('jsonwebtoken');
+// const app     = require('../app');
+// const pool    = require('../db/connection');
+
+// // ──────────────────────────────────────────────
+// // Helpers
+// // ──────────────────────────────────────────────
+
+// /** Genera un JWT válido para las rutas protegidas */
+// const makeJwt = (payload = { sub: 'test-user' }) =>
+//   jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+// /** Header Authorization con JWT */
+// const authHeader = () => ({ Authorization: `Bearer ${makeJwt()}` });
+
+// /** Header Authorization con SERVICE_TOKEN (ruta /internal) */
+// const serviceHeader = () => ({
+//   Authorization: `Bearer ${process.env.SERVICE_TOKEN}`,
+// });
+
+// /** Limpia solo los clientes creados durante los tests (email con dominio test.local) */
+// const cleanTestCustomers = async () => {
+//   await pool.execute("DELETE FROM customers WHERE email LIKE '%@test.local'");
+// };
+
+// // ──────────────────────────────────────────────
+// // Setup / Teardown global
+// // ──────────────────────────────────────────────
+
+// beforeAll(async () => {
+//   // Verifica conexión a la BD antes de empezar
+//   await pool.execute('SELECT 1');
+// });
+
+// afterAll(async () => {
+//   await cleanTestCustomers();
+//   await pool.end(); // cierra el pool para que Jest pueda terminar limpiamente
+// });
+
+// afterEach(async () => {
+//   // Limpieza entre tests para garantizar aislamiento
+//   await cleanTestCustomers();
+// });
+
+// // ══════════════════════════════════════════════
+// // 1. HEALTH CHECK
+// // ══════════════════════════════════════════════
+
+// describe('GET /health', () => {
+//   it('responde 200 con status ok', async () => {
+//     const res = await request(app).get('/health');
+
+//     expect(res.status).toBe(200);
+//     expect(res.body).toMatchObject({ status: 'ok', service: 'customers-api' });
+//   });
+// });
+
+// // ══════════════════════════════════════════════
+// // 2. AUTENTICACIÓN JWT (aplica a todas las rutas /customers)
+// // ══════════════════════════════════════════════
+
+// describe('Autenticación JWT', () => {
+//   it('rechaza petición sin header Authorization → 401', async () => {
+//     const res = await request(app).get('/customers');
+
+//     expect(res.status).toBe(401);
+//     expect(res.body).toHaveProperty('error');
+//   });
+
+//   it('rechaza token malformado → 401', async () => {
+//     const res = await request(app)
+//       .get('/customers')
+//       .set('Authorization', 'Bearer token.invalido.xyz');
+
+//     expect(res.status).toBe(401);
+//     expect(res.body).toHaveProperty('error');
+//   });
+
+//   it('rechaza token firmado con secreto erróneo → 401', async () => {
+//     const badToken = jwt.sign({ sub: 'hacker' }, 'secreto-equivocado');
+//     const res = await request(app)
+//       .get('/customers')
+//       .set('Authorization', `Bearer ${badToken}`);
+
+//     expect(res.status).toBe(401);
+//   });
+// });
+
+// // ══════════════════════════════════════════════
+// // 3. POST /customers – Crear cliente
+// // ══════════════════════════════════════════════
+
+// // describe('POST /customers', () => {
+
+
+// //   const validPayload = {
+// //     name: 'ACME Corp',
+// //     email: 'acme@test.local',
+// //     phone: '+593987654321',
+// //   };
+
+// //   it('crea un cliente válido → 201 con datos del cliente', async () => {
+// //     const res = await request(app)
+// //       .post('/customers')
+// //       .set(authHeader())
+// //       .send(validPayload);
+
+// //     expect(res.status).toBe(201);
+// //     expect(res.body).toMatchObject({
+// //       name:  validPayload.name,
+// //       email: validPayload.email,
+// //       phone: validPayload.phone,
+// //     });
+// //     expect(res.body).toHaveProperty('id');
+// //     expect(res.body).toHaveProperty('created_at');
+// //   });
+
+// //   it('rechaza email duplicado → 409', async () => {
+// //     // Primer insert (debe pasar)
+// //     await request(app)
+// //       .post('/customers')
+// //       .set(authHeader())
+// //       .send(validPayload);
+
+// //     // Segundo insert con el mismo email
+// //     const res = await request(app)
+// //       .post('/customers')
+// //       .set(authHeader())
+// //       .send(validPayload);
+
+// //     expect(res.status).toBe(409);
+// //     expect(res.body).toHaveProperty('error');
+// //   });
+
+// //   it('rechaza body sin "name" → 400', async () => {
+// //     const res = await request(app)
+// //       .post('/customers')
+// //       .set(authHeader())
+// //       .send({ email: 'noname@test.local', phone: '111' });
+
+// //     expect(res.status).toBe(400);
+// //     expect(res.body).toHaveProperty('error');
+// //   });
+
+// //   it('rechaza email con formato inválido → 400', async () => {
+// //     const res = await request(app)
+// //       .post('/customers')
+// //       .set(authHeader())
+// //       .send({ name: 'Test', email: 'no-es-un-email', phone: '111' });
+
+// //     expect(res.status).toBe(400);
+// //   });
+
+// //   it('rechaza body completamente vacío → 400', async () => {
+// //     const res = await request(app)
+// //       .post('/customers')
+// //       .set(authHeader())
+// //       .send({});
+
+// //     expect(res.status).toBe(400);
+// //   });
+// // });
+
+
+// // const request = require('supertest');
+// // const app = require('../../app'); // ajusta si tu ruta es distinta
+// const { createCustomerData } = require('./helpers/factory');
+
+// describe('POST /customers', () => {
+//   it('crea un cliente válido → 201', async () => {
+//     const data = createCustomerData();
+
+//     const res = await request(app)
+//       .post('/customers')
+//       .set('Authorization', 'Bearer validtoken') // usa tu helper si tienes
+//       .send(data);
+
+//     expect(res.status).toBe(201);
+//     expect(res.body.email).toBe(data.email);
+//   });
+
+//   it('rechaza email duplicado → 409', async () => {
+//     const data = createCustomerData();
+
+//     await request(app)
+//       .post('/customers')
+//       .set('Authorization', 'Bearer validtoken')
+//       .send(data);
+
+//     const res = await request(app)
+//       .post('/customers')
+//       .set('Authorization', 'Bearer validtoken')
+//       .send(data);
+
+//     expect(res.status).toBe(409);
+//     });
+// });
+
+
+// // ══════════════════════════════════════════════
+// // 4. GET /customers/:id – Detalle de cliente
+// // ══════════════════════════════════════════════
+
+// describe('GET /customers/:id', () => {
+//   let customerId;
+
+//   beforeEach(async () => {
+//     // Crea un cliente base para cada test
+//     const res = await request(app)
+//       .post('/customers')
+//       .set(authHeader())
+//       .send({ name: 'Detail User', email: 'detail@test.local', phone: '000' });
+//     customerId = res.body.id;
+//   });
+
+//   it('devuelve el cliente por id → 200', async () => {
+//     const res = await request(app)
+//       .get(`/customers/${customerId}`)
+//       .set(authHeader());
+
+//     expect(res.status).toBe(200);
+//     expect(res.body).toMatchObject({
+//       id:    customerId,
+//       name:  'Detail User',
+//       email: 'detail@test.local',
+//     });
+//   });
+
+//   it('devuelve 404 para id inexistente', async () => {
+//     const res = await request(app)
+//       .get('/customers/999999')
+//       .set(authHeader());
+
+//     expect(res.status).toBe(404);
+//     expect(res.body).toHaveProperty('error');
+//   });
+
+//   it('no devuelve clientes con soft-delete', async () => {
+//     // Elimina el cliente
+//     await request(app)
+//       .delete(`/customers/${customerId}`)
+//       .set(authHeader());
+
+//     // Intenta obtenerlo
+//     const res = await request(app)
+//       .get(`/customers/${customerId}`)
+//       .set(authHeader());
+
+//     expect(res.status).toBe(404);
+//   });
+// });
+
+// // ══════════════════════════════════════════════
+// // 5. GET /customers – Búsqueda y paginación
+// // ══════════════════════════════════════════════
+
+// describe('GET /customers', () => {
+//   beforeEach(async () => {
+//     // Inserta varios clientes de prueba
+//     const clientes = [
+//       { name: 'Alfa SA',   email: 'alfa@test.local',   phone: '001' },
+//       { name: 'Beta SRL',  email: 'beta@test.local',   phone: '002' },
+//       { name: 'Gamma Inc', email: 'gamma@test.local',  phone: '003' },
+//       { name: 'Delta Ltd', email: 'delta@test.local',  phone: '004' },
+//     ];
+//     for (const c of clientes) {
+//       await request(app).post('/customers').set(authHeader()).send(c);
+//     }
+//   });
+
+//   it('devuelve listado con paginación → 200 con { data, nextCursor }', async () => {
+//     const res = await request(app)
+//       .get('/customers')
+//       .set(authHeader());
+
+//     expect(res.status).toBe(200);
+//     expect(res.body).toHaveProperty('data');
+//     expect(Array.isArray(res.body.data)).toBe(true);
+//     // nextCursor puede ser null o un número
+//     expect(res.body).toHaveProperty('nextCursor');
+//   });
+
+//   it('filtra por nombre con search', async () => {
+//     const res = await request(app)
+//       .get('/customers?search=Alfa')
+//       .set(authHeader());
+
+//     expect(res.status).toBe(200);
+//     expect(res.body.data.some(c => c.name === 'Alfa SA')).toBe(true);
+//     // No debe retornar clientes que no coincidan
+//     expect(res.body.data.every(c => c.name.includes('Alfa') || c.email.includes('alfa'))).toBe(true);
+//   });
+
+//   it('filtra por email con search', async () => {
+//     const res = await request(app)
+//       .get('/customers?search=beta@test.local')
+//       .set(authHeader());
+
+//     expect(res.status).toBe(200);
+//     expect(res.body.data.length).toBeGreaterThanOrEqual(1);
+//     expect(res.body.data[0].email).toBe('beta@test.local');
+//   });
+
+//   it('respeta el límite con limit=2', async () => {
+//     const res = await request(app)
+//       .get('/customers?limit=2')
+//       .set(authHeader());
+
+//     expect(res.status).toBe(200);
+//     expect(res.body.data.length).toBeLessThanOrEqual(2);
+//   });
+
+//   it('paginación con cursor devuelve registros posteriores', async () => {
+//     // Primera página con limit=2
+//     const page1 = await request(app)
+//       .get('/customers?limit=2')
+//       .set(authHeader());
+
+//     const cursor = page1.body.nextCursor;
+//     if (!cursor) return; // Si no hay más páginas, ok
+
+//     const page2 = await request(app)
+//       .get(`/customers?limit=2&cursor=${cursor}`)
+//       .set(authHeader());
+
+//     expect(page2.status).toBe(200);
+//     // Todos los ids de página 2 deben ser mayores que cursor
+//     page2.body.data.forEach(c => expect(c.id).toBeGreaterThan(cursor));
+//   });
+
+//   it('search vacío devuelve todos los clientes activos', async () => {
+//     const res = await request(app)
+//       .get('/customers?search=')
+//       .set(authHeader());
+
+//     expect(res.status).toBe(200);
+//     expect(res.body.data.length).toBeGreaterThanOrEqual(4);
+//   });
+// });
+
+// // ══════════════════════════════════════════════
+// // 6. PUT /customers/:id – Actualizar cliente
+// // ══════════════════════════════════════════════
+
+// describe('PUT /customers/:id', () => {
+//   let customerId;
+
+//   beforeEach(async () => {
+//     const res = await request(app)
+//       .post('/customers')
+//       .set(authHeader())
+//       .send({ name: 'Original Name', email: 'original@test.local', phone: '100' });
+//     customerId = res.body.id;
+//   });
+
+//   it('actualiza el nombre del cliente → 200', async () => {
+//     const res = await request(app)
+//       .put(`/customers/${customerId}`)
+//       .set(authHeader())
+//       .send({ name: 'Updated Name' });
+
+//     expect(res.status).toBe(200);
+//     expect(res.body.name).toBe('Updated Name');
+//     // Email y phone deben mantenerse igual (COALESCE)
+//     expect(res.body.email).toBe('original@test.local');
+//   });
+
+//   it('actualiza el teléfono → 200', async () => {
+//     const res = await request(app)
+//       .put(`/customers/${customerId}`)
+//       .set(authHeader())
+//       .send({ phone: '999' });
+
+//     expect(res.status).toBe(200);
+//     expect(res.body.phone).toBe('999');
+//   });
+
+//   it('devuelve 404 para id inexistente', async () => {
+//     const res = await request(app)
+//       .put('/customers/999999')
+//       .set(authHeader())
+//       .send({ name: 'No existe' });
+
+//     expect(res.status).toBe(404);
+//   });
+
+//   it('no permite actualizar un cliente con soft-delete', async () => {
+//     await request(app).delete(`/customers/${customerId}`).set(authHeader());
+
+//     const res = await request(app)
+//       .put(`/customers/${customerId}`)
+//       .set(authHeader())
+//       .send({ name: 'Ghost' });
+
+//     expect(res.status).toBe(404);
+//   });
+// });
+
+// // ══════════════════════════════════════════════
+// // 7. DELETE /customers/:id – Soft-delete
+// // ══════════════════════════════════════════════
+
+// describe('DELETE /customers/:id', () => {
+//   let customerId;
+
+//   beforeEach(async () => {
+//     const res = await request(app)
+//       .post('/customers')
+//       .set(authHeader())
+//       .send({ name: 'To Delete', email: 'todelete@test.local', phone: '200' });
+//     customerId = res.body.id;
+//   });
+
+//   it('elimina (soft-delete) un cliente existente → 204', async () => {
+//     const res = await request(app)
+//       .delete(`/customers/${customerId}`)
+//       .set(authHeader());
+
+//     expect(res.status).toBe(204);
+//     expect(res.text).toBe(''); // sin body
+//   });
+
+//   it('devuelve 404 al intentar eliminar el mismo cliente dos veces', async () => {
+//     await request(app).delete(`/customers/${customerId}`).set(authHeader());
+
+//     const res = await request(app)
+//       .delete(`/customers/${customerId}`)
+//       .set(authHeader());
+
+//     expect(res.status).toBe(404);
+//   });
+
+//   it('devuelve 404 para id inexistente', async () => {
+//     const res = await request(app)
+//       .delete('/customers/999999')
+//       .set(authHeader());
+
+//     expect(res.status).toBe(404);
+//   });
+
+//   it('el cliente eliminado no aparece en GET /customers', async () => {
+//     await request(app).delete(`/customers/${customerId}`).set(authHeader());
+
+//     const res = await request(app)
+//       .get('/customers')
+//       .set(authHeader());
+
+//     const ids = res.body.data.map(c => c.id);
+//     expect(ids).not.toContain(customerId);
+//   });
+// });
+
+// // ══════════════════════════════════════════════
+// // 8. GET /internal/customers/:id – Endpoint interno
+// // ══════════════════════════════════════════════
+
+// describe('GET /internal/customers/:id', () => {
+//   let customerId;
+
+//   beforeEach(async () => {
+//     const res = await request(app)
+//       .post('/customers')
+//       .set(authHeader())
+//       .send({ name: 'Internal User', email: 'internal@test.local', phone: '300' });
+//     customerId = res.body.id;
+//   });
+
+//   it('devuelve el cliente con SERVICE_TOKEN válido → 200', async () => {
+//     const res = await request(app)
+//       .get(`/internal/customers/${customerId}`)
+//       .set(serviceHeader());
+
+//     expect(res.status).toBe(200);
+//     expect(res.body).toMatchObject({
+//       id:    customerId,
+//       name:  'Internal User',
+//       email: 'internal@test.local',
+//     });
+//   });
+
+//   it('rechaza sin token → 401', async () => {
+//     const res = await request(app)
+//       .get(`/internal/customers/${customerId}`);
+
+//     expect(res.status).toBe(401);
+//   });
+
+//   it('rechaza con JWT en lugar de SERVICE_TOKEN → 401', async () => {
+//     // El endpoint /internal no acepta JWT de usuario, solo SERVICE_TOKEN
+//     const res = await request(app)
+//       .get(`/internal/customers/${customerId}`)
+//       .set(authHeader()); // JWT normal, no el service token
+
+//     expect(res.status).toBe(401);
+//   });
+
+//   it('rechaza SERVICE_TOKEN incorrecto → 401', async () => {
+//     const res = await request(app)
+//       .get(`/internal/customers/${customerId}`)
+//       .set('Authorization', 'Bearer wrong-service-token');
+
+//     expect(res.status).toBe(401);
+//   });
+
+//   it('devuelve 404 para id inexistente con token válido', async () => {
+//     const res = await request(app)
+//       .get('/internal/customers/999999')
+//       .set(serviceHeader());
+
+//     expect(res.status).toBe(404);
+//   });
+
+//   it('no expone clientes con soft-delete', async () => {
+//     await request(app).delete(`/customers/${customerId}`).set(authHeader());
+
+//     const res = await request(app)
+//       .get(`/internal/customers/${customerId}`)
+//       .set(serviceHeader());
+
+//     expect(res.status).toBe(404);
+//   });
+// });
