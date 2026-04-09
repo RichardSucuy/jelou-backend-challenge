@@ -227,7 +227,7 @@ El endpoint `/confirm` y el Lambda soportan idempotencia mediante `X-Idempotency
 
 Para facilitar las pruebas, se incluye una colección de Insomnia con todos los endpoints configurados, incluyendo variables de entorno y ejemplos de cuerpo de solicitud.
 
-1. Descarga el archivo `insomnia_collection.json` ubicado en la raíz de este proyecto.
+1. Descarga el archivo `insomnia_2026-04-09_collection.json` ubicado en la raíz de este proyecto.
 2. Abre **Insomnia**.
 3. Ve a **Dashboard** > **Import** > **File**.
 4. Selecciona el archivo descargado.
