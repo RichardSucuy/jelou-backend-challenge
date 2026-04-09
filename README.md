@@ -212,3 +212,15 @@ Para facilitar las pruebas, se incluye una colección de Insomnia con todos los 
 5. (Opcional) Configura la variable `base_url` en el entorno de Insomnia si usas puertos distintos.
 
 > **Nota:** No olvides generar tu JWT e inclúyelo en la pestaña **Auth** > **Bearer** de la colección para que las peticiones funcionen correctamente.
+
+## Gestión de Base de Datos
+
+### Respaldos
+Se ha incluido un volcado completo de la base de datos con datos de prueba actuales en:
+- `db/jelou_db.sql`: Contiene la estructura y datos (Exportado desde el contenedor).
+
+### Cómo restaurar o limpiar
+Si deseas resetear la base de datos a su estado original (ejecutando de nuevo `schema.sql` y `seed.sql`):
+```bash
+docker-compose down -v
+docker-compose up -d
