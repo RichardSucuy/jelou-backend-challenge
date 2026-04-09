@@ -21,7 +21,7 @@ Customers API (3001) ←→ Orders API (3002) ←→ Lambda Orquestador (3003)
 ### 1. Clonar repositorio
 
 ```bash
-git clone https://github.com/TU_USUARIO/jelou-backend-challenge.git
+git clone https://github.com/RichardSucuy/jelou-backend-challenge.git
 cd jelou-backend-challenge
 ```
 
@@ -183,3 +183,15 @@ El endpoint `/confirm` y el Lambda soportan idempotencia mediante `X-Idempotency
 
 - Customers API: `customers-api/openapi.yaml`
 - Orders API: `orders-api/openapi.yaml`
+
+## Pruebas con Insomnia
+
+Para facilitar las pruebas, se incluye una colección de Insomnia con todos los endpoints configurados, incluyendo variables de entorno y ejemplos de cuerpo de solicitud.
+
+1. Descarga el archivo `insomnia_collection.json` ubicado en la raíz de este proyecto.
+2. Abre **Insomnia**.
+3. Ve a **Dashboard** > **Import** > **File**.
+4. Selecciona el archivo descargado.
+5. (Opcional) Configura la variable `base_url` en el entorno de Insomnia si usas puertos distintos.
+
+> **Nota:** No olvides generar tu JWT e inclúyelo en la pestaña **Auth** > **Bearer** de la colección para que las peticiones funcionen correctamente.

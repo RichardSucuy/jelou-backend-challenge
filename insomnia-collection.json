@@ -1,0 +1,134 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Jelou Backend Challenge
+meta:
+  id: wrk_c0d5241bf235415eab5b1329c1542f5c
+  created: 1775705218188
+  modified: 1775705218188
+  description: ""
+collection:
+  - url: http://localhost:3001/customers
+    name: http://localhost:3001/customers
+    meta:
+      id: req_6a699572998a444ca224efc451626bb9
+      created: 1775705226238
+      modified: 1775709410314
+      isPrivate: false
+      description: ""
+      sortKey: -1775705226238
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Test Company",
+          "email": "test@company.com",
+          "phone": "+5930983965255"
+        }
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+      - name: Content-Type
+        value: application/json
+      - name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6Im9wZXJhdG9yIiwiaWF0IjoxNzc1NzA2MzM3LCJleHAiOjE3NzU3OTI3Mzd9.OqanEz67d270Q1ZSG-cQ3tq86AsmuCe8g6E_b223fU8
+        description: ""
+        disabled: false
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3003/dev/orchestrator/create-and-confirm-order
+    name: http://localhost:3003/dev/orchestrator/create-and-confirm-order
+    meta:
+      id: req_3e5437f6187a45d19293ee050bead2c0
+      created: 1775707355698
+      modified: 1775709424994
+      isPrivate: false
+      description: ""
+      sortKey: -1775707355698
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "customer_id": 1,
+          "items": [
+            { "product_id": 1, "qty": 2 }
+          ],
+          "idempotency_key": "test-key-001",
+          "correlation_id": "req-001"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3002/orders/1/cancel
+    name: http://localhost:3002/orders/1/cancel
+    meta:
+      id: req_3465e49c84194b239618c54903018b81
+      created: 1775709459017
+      modified: 1775709501689
+      isPrivate: false
+      description: ""
+      sortKey: -1775705226188
+    method: POST
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+      - name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6Im9wZXJhdG9yIiwiaWF0IjoxNzc1NzA2MzM3LCJleHAiOjE3NzU3OTI3Mzd9.OqanEz67d270Q1ZSG-cQ3tq86AsmuCe8g6E_b223fU8
+        description: ""
+        disabled: false
+      - name: Content-Type
+        value: application/json
+        description: ""
+        disabled: false
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_385134a67e6f4e0e221a31556ebedbfc186e7700
+    created: 1775705218191
+    modified: 1775705218191
+environments:
+  name: Base Environment
+  meta:
+    id: env_385134a67e6f4e0e221a31556ebedbfc186e7700
+    created: 1775705218190
+    modified: 1775706397005
+    isPrivate: false
+  data:
+    "": ""
